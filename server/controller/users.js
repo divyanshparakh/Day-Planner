@@ -83,8 +83,6 @@ exports.loginUser = function (req, res) {
     }
 };
 
-
-
 exports.registerUser = function (req, res) {
     var registerInputChecked = registerUserSchema.validate(req.body);
     if (registerInputChecked.error == null) {
@@ -121,3 +119,74 @@ exports.registerUser = function (req, res) {
         res.status(400).json(registerInputChecked.error.details[0]);
     }
 };
+
+exports.refreshToken = function (req, res) {
+    const email = req.email;
+
+    if (email.length == 0) {
+        res.status(400).json({
+            message: "Email is empty",
+        });
+    } else {
+        login_pool.query(
+            "SELECT * FROM authentication WHERE email = ($1)",
+            [email],
+            (err, results) => {
+                if (err) {
+                    console.log("CONNECTION WITH DB FAILED");
+                    throw err;
+                } 
+                else if (results.rows.length == 1) {
+                    // On Successful Checking
+                    const token = jwt.sign(
+                        {email},
+                        atob(process.env.TOKEN_SECRET), // converting token_secret to base 64
+                        { expiresIn: "1800s" },
+                        {
+                            alg: "HS256",
+                            typ: "JWT"
+                        },
+                        (err) => {
+                            if (err) {
+                                res.status(400).json({
+                                    message: "Not able to create a token",
+                                });
+                                // console.log(err);
+                            }
+                        }
+                    );
+
+                    res.header({
+                        Authorization: "Bearer " + token,
+                        "Access-Control-Expose-Headers": "Authorization",
+                    });
+                    res.status(201).json({
+                        message: results.rows[0].name + "'s Token Refreshed",
+                    });
+                    console.log(results.rows[0].name + "'s Token Refreshed");
+                } else {
+                    login_pool.query(
+                        "SELECT * FROM authentication WHERE email = ($1)",
+                        [email],
+                        (errUser, resultUser) => {
+                            if (resultUser.rows.length != 1) {
+                                res.status(400).json({
+                                    message: "User does not exist",
+                                });
+                            } else {
+                                res.status(400).json({
+                                    message: "Password is incorrect",
+                                });
+                            }
+                            if (errUser) {
+                                res.status(501).json({
+                                    message: "Server Internal Error",
+                                });
+                            }
+                        }
+                    );
+                }
+            }
+        );
+    }
+}
