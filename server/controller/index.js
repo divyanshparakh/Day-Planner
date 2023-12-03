@@ -28,11 +28,12 @@ exports.addTodos = function(req, res, next) {
     const id = uuidv4();
     console.log(id);
     try {
-        todos_pool.query("INSERT INTO todos (id, email, title, progress) VALUES ($1, $2, $3, $4)",
+        todos_pool.query("INSERT INTO todos (id, email, title, start, progress) VALUES ($1, $2, $3, $4, $5)",
             [
                 id,
                 email,
                 title,
+                start,
                 progress
             ],
             (err, results) => {

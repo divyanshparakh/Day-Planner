@@ -29,7 +29,7 @@ exports.loginUser = function (req, res) {
                         const token = jwt.sign(
                             {email},
                             atob(process.env.TOKEN_SECRET), // converting token_secret to base 64
-                            { expiresIn: "1800s" },
+                            { expiresIn: "1800s" }, // Token has expiration of 30 minutes
                             {
                                 alg: "HS256",
                                 typ: "JWT"

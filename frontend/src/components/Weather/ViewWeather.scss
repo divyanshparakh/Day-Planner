@@ -16,7 +16,10 @@
         width: 80%;
         p {
             color: whitesmoke;
-        }            
+        }
+        .location {
+            cursor: pointer;
+        }
     }
 
     .search-location {
@@ -36,6 +39,7 @@
                 &:focus {
                     outline: none;
                     color: #efefef;
+                    font-size: 20px;
                 }
             }
 

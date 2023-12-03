@@ -101,6 +101,10 @@ function ViewWeather() {
     const handleSearchLocation = async (result) => {
         await searchLocation(result);
     };
+
+    const handleChangeLocation = async (result) => {
+        document.getElementById('search-location').focus();
+    }
     
     return (
         <div className="view-weather-wrapper">
@@ -108,7 +112,7 @@ function ViewWeather() {
                 currentWeather && Object.keys(currentWeather).length > 0 && (
                     <div className="selected-location-weather">
                         <img src={currentWeather['current']['condition']['icon']} alt="" srcset="" height={35} />
-                        <p>
+                        <p className='location' onClick={(e) => {handleChangeLocation()}}>
                             {currentWeather['location']['name']}
                         </p>
                         <p>

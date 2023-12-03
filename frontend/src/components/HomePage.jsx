@@ -4,6 +4,7 @@ import jwtDecode from "jwt-decode";
 import ViewWeather from "./Weather/ViewWeather";
 import ViewTodos from "./Todos/ViewTodos";
 import api from '../index';
+import Calendar from "./Calendar/ViewCalendar";
 
 function HomePage() {
 	const [decodedToken, setDecodedToken] = useState({});

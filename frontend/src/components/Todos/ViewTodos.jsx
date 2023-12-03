@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import './ViewTodos.scss';
 import api from '../../index';
+import ViewCalendar from '../Calendar/ViewCalendar';
 
 
 function ViewTodos({decodedToken, logoutButton}) {
     const [todos, setTodos] = useState([]);
+    const [completedTodos, setCompletedTodos] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [openAddDialog, handleAddTodoDialogOpen] = useState(false);
     const [editingTodo, setEditingTodo] = useState({
@@ -12,20 +14,22 @@ function ViewTodos({decodedToken, logoutButton}) {
         title: '',
         progress: 0, // Assuming progress is a number, change it according to your requirements
     });
-
     const [newTodo, setNewTodo] = useState({
         id: '0',
         title: '',
         progress: 0, // Assuming progress is a number, change it according to your requirements
+        start: '00-00-0000'
     });
+    const [searchTerm, setSearchTerm] = useState();
 
     const getTodos = async () => {
         try {
             const response = await api.get("/todos", {
                 decodedToken,
             });
-            if(response.status === 200)
+            if(response.status === 200) {
                 setTodos(response.data);
+            }
             setIsLoading(false);
         } catch (error) {
             if (error.response && error.response.status === 401) {
@@ -47,6 +51,7 @@ function ViewTodos({decodedToken, logoutButton}) {
             setNewTodo({
                 id: "0",
                 title: "",
+                start: "",
                 progress: 0,
             });
             handleAddTodoDialogOpen(false);
@@ -64,10 +69,8 @@ function ViewTodos({decodedToken, logoutButton}) {
             })
             .then(
                 setEditingTodo(null)
-            )
-            .then(
-                getTodos()
-            )
+            );
+            getTodos();
         } catch (error) {
             console.error("Error deleting todo:", error);
         }
@@ -82,6 +85,24 @@ function ViewTodos({decodedToken, logoutButton}) {
             )
         } catch (error) {
             console.error("Error deleting todo:", error);
+        }
+    };
+
+    const handleDoneTodo = async (todoId) => {
+        try {
+            // await api.put(`/todos/${todoId}`, { completed: true });
+            const completedTodo = todos.find(todo => todo.id === todoId);
+            setCompletedTodos(prevCompletedTodos => [...prevCompletedTodos, completedTodo]);
+            setTodos(prevTodos => prevTodos.filter(todo => todo.id !== todoId));
+        } catch (error) {
+            console.error("Error marking todo as done:", error);
+        }
+        var element = document.getElementById('todo-' + todoId);
+        if (element.classList.contains('done')) {
+            element.classList.remove('done');
+        }
+        else {
+            element.classList.add('done');
         }
     };
 
@@ -121,13 +142,23 @@ function ViewTodos({decodedToken, logoutButton}) {
     if (isLoading) {
         return <div className="loading">Loading...</div>;
     }
-    
+
+    const showCompleted = false;
+
+    // const filteredTodos = showCompleted ? completedTodos : todos.filter(todo => todo.title.toLowerCase().includes(searchTerm.toLowerCase()));
+
     return (
         <div className="scaffold">
             <h1>TODOs</h1>
             <section className='upper-section'>
                 <button onClick={() => handleAddTodoDialogOpen(true)}>Add</button>
                 { logoutButton }
+                <input
+                    type="text"
+                    placeholder="Search todos..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                />
             </section>
             {
                 openAddDialog && (
@@ -150,52 +181,95 @@ function ViewTodos({decodedToken, logoutButton}) {
                             />
                             <span className="slider-value">{newTodo.progress}</span>
                         </div>
+                        <input
+                            type="date"
+                            value={newTodo.start}
+                            className='start'
+                            onChange={(e) => setNewTodo({ ...newTodo, start: e.target.value })}
+                        />
                         {newTodo.title && <button onClick={handleCreateTodo}>Add</button>}
                         <button type='submit'>Cancel</button>
                     </form>
                 )
             }
-            <ul className="todo-list">
-                {todos.length > 0 && todos.map((todo, index) => (
-                    <li key={todo.id} className="todo-item-card" style={{ background: calculateBackground(editingTodo?.progress || todo.progress) }}>
-                        {editingTodo && editingTodo.id === todo.id ? (
-                            <form onSubmit={(e) => handleEditTodo(e, todo.id)} className="edit-todo-form">
-                                <input
-                                    type="text"
-                                    value={editingTodo.title}
-                                    className='title'
-                                    onChange={(e) => setEditingTodo({ ...editingTodo, title: e.target.value })}
-                                    autoFocus
-                                />
-                                <div className="range-slider-container">
+            <section className="todo-list-section">
+                <h2>Incomplete Todos</h2>
+                <ul className="todos-list">
+                    {todos.length > 0 && todos.map((todo, index) => (
+                        <li id={"todo-" + todo.id}  key={todo.id} className="todo-item-card" style={{ background: calculateBackground(editingTodo?.progress || todo.progress) }}>
+                            {editingTodo && editingTodo.id === todo.id ? (
+                                <form onSubmit={(e) => handleEditTodo(e, todo.id)} className="edit-todo-form">
                                     <input
-                                        type="range"
-                                        min={0}
-                                        max={100}
-                                        value={editingTodo.progress}
-                                        className='slider'
-                                        onChange={(e) => setEditingTodo({ ...editingTodo, progress: parseInt(e.target.value, 10) })}
+                                        id={"todo-" + todo.id}
+                                        type="text"
+                                        value={editingTodo.title}
+                                        className='title'
+                                        onChange={(e) => setEditingTodo({ ...editingTodo, title: e.target.value })}
+                                        autoFocus
                                     />
-                                    <span className="slider-value">{editingTodo.progress}</span>
+                                    <div className="range-slider-container">
+                                        <input
+                                            type="range"
+                                            min={0}
+                                            max={100}
+                                            value={editingTodo.progress}
+                                            className='slider'
+                                            onChange={(e) => setEditingTodo({ ...editingTodo, progress: parseInt(e.target.value, 10) })}
+                                        />
+                                        <span className="slider-value">{editingTodo.progress}</span>
+                                    </div>
+                                    {(editingTodo.title !== todo.title || editingTodo.progress !== todo.progress) && <button type='submit'>Save</button>}
+                                    <button type='button' onClick={() => { setEditingTodo(null) }}>Cancel</button>
+                                </form>
+                            ) : (
+                                <div className="todo-card-header" onClick={() => handleEditTodoDialogOpen(todo.id)}>
+                                    {todo.title}
                                 </div>
-                                {(editingTodo.title !== todo.title || editingTodo.progress !== todo.progress) && <button type='submit'>Save</button>}
-                                <button type='button' onClick={() => { setEditingTodo(null) }}>Cancel</button>
-                            </form>
-                        ) : (
-                            <div className="todo-card-header" onClick={() => handleEditTodoDialogOpen(todo.id)}>
-                                {todo.title}
+                            )}
+                            <div className="todo-card-options">
+                                {/* <button onClick={() => handleEditTodoDialogOpen(todo.id)}>Edit</button> */}
+                                <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
+                                <button type="button" onClick={() => handleDoneTodo(todo.id)}>Done</button>
                             </div>
-                        )}
-                        <br />
-                        <br />
-                        <br />
-                        <div className="todo-card-options">
-                            {/* <button onClick={() => handleEditTodoDialogOpen(todo.id)}>Edit</button> */}
-                            <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
-                        </div>
-                    </li>
-                ))}
-            </ul>
+                        </li>
+                    ))}
+                </ul>
+            </section>
+            <section className="completed-todos-section todo-list-section">
+                <h2>Completed Todos</h2>
+                <ul className="completed-todos-list todos-list">
+                    {completedTodos.length > 0 && completedTodos.map((todo, index) => (
+                        <li id={"todo-" + todo.id}  key={todo.id} className="todo-item-card" style={{ background: calculateBackground(editingTodo?.progress || todo.progress) }}>
+                            {editingTodo && editingTodo.id === todo.id ? (
+                                <form onSubmit={(e) => handleEditTodo(e, todo.id)} className="edit-todo-form">
+                                    <input
+                                        id={"todo-" + todo.id}
+                                        type="text"
+                                        value={editingTodo.title}
+                                        className='title'
+                                        onChange={(e) => setEditingTodo({ ...editingTodo, title: e.target.value })}
+                                        autoFocus
+                                    />
+                                    <div className="range-slider-container">
+                                        <span className="slider-value">{editingTodo.progress}</span>
+                                    </div>
+                                    {(editingTodo.title !== todo.title || editingTodo.progress !== todo.progress) && <button type='submit'>Save</button>}
+                                    <button type='button' onClick={() => { setEditingTodo(null) }}>Cancel</button>
+                                </form>
+                            ) : (
+                                <div className="todo-card-header">
+                                    {todo.title}
+                                </div>
+                            )}
+                            <div className="todo-card-options">
+                                <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
+                                <button type="button" onClick={() => handleDoneTodo(todo.id)}>Done</button>
+                            </div>
+                        </li>
+                    ))}
+                </ul>
+            </section>
+            <ViewCalendar todos={todos}></ViewCalendar>
         </div>
     );
 }
