@@ -6,17 +6,20 @@ import ViewCalendar from '../Calendar/ViewCalendar';
 
 function ViewTodos({decodedToken, logoutButton}) {
     const [todos, setTodos] = useState([]);
+    const [incompletedTodos, setIncompletedTodos] = useState([]);
     const [completedTodos, setCompletedTodos] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [openAddDialog, handleAddTodoDialogOpen] = useState(false);
     const [editingTodo, setEditingTodo] = useState({
         id: '0',
         title: '',
+        completed: false,
         progress: 0, // Assuming progress is a number, change it according to your requirements
     });
     const [newTodo, setNewTodo] = useState({
         id: '0',
         title: '',
+        completed: false,
         progress: 0, // Assuming progress is a number, change it according to your requirements
         start: '00-00-0000'
     });
@@ -28,7 +31,14 @@ function ViewTodos({decodedToken, logoutButton}) {
                 decodedToken,
             });
             if(response.status === 200) {
+                // console.log(response.data);
                 setTodos(response.data);
+                setCompletedTodos((response.data).filter(function(todo) {
+                    return todo.completed;
+                }));
+                setIncompletedTodos((response.data).filter(function(todo) {
+                    return todo.completed === false;
+                }));
             }
             setIsLoading(false);
         } catch (error) {
@@ -65,6 +75,7 @@ function ViewTodos({decodedToken, logoutButton}) {
         try {
             await api.put(`/todos/${editingTodo.id}`, {
                 title: editingTodo.title,
+                completed: editingTodo.completed,
                 progress: editingTodo.progress
             })
             .then(
@@ -88,21 +99,18 @@ function ViewTodos({decodedToken, logoutButton}) {
         }
     };
 
-    const handleDoneTodo = async (todoId) => {
+    const handleTodoStatus = async (todo) => {
         try {
-            // await api.put(`/todos/${todoId}`, { completed: true });
-            const completedTodo = todos.find(todo => todo.id === todoId);
-            setCompletedTodos(prevCompletedTodos => [...prevCompletedTodos, completedTodo]);
-            setTodos(prevTodos => prevTodos.filter(todo => todo.id !== todoId));
+            await api.put(`/todos/${todo.id}`, {
+                title: todo.title,
+                start: todo.start,
+                completed: !todo.completed,
+                progress: todo.progress,
+                id: todo.id
+            });
+            getTodos();
         } catch (error) {
             console.error("Error marking todo as done:", error);
-        }
-        var element = document.getElementById('todo-' + todoId);
-        if (element.classList.contains('done')) {
-            element.classList.remove('done');
-        }
-        else {
-            element.classList.add('done');
         }
     };
 
@@ -149,17 +157,19 @@ function ViewTodos({decodedToken, logoutButton}) {
 
     return (
         <div className="scaffold">
-            <h1>TODOs</h1>
+            <h3>Day Schedule</h3>
             <section className='upper-section'>
-                <button onClick={() => handleAddTodoDialogOpen(true)}>Add</button>
                 { logoutButton }
-                <input
-                    type="text"
-                    placeholder="Search todos..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
             </section>
+            <ViewCalendar todos={todos}></ViewCalendar>
+            <input
+                className='search-todo'
+                type="text"
+                placeholder="Search todos..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            <button onClick={() => handleAddTodoDialogOpen(!openAddDialog)}>Add</button>
             {
                 openAddDialog && (
                     <form className="dialog create-todo" onSubmit={handleNewTodoDialogClose}  style={{ background: calculateBackground(newTodo.progress) }}>
@@ -193,9 +203,10 @@ function ViewTodos({decodedToken, logoutButton}) {
                 )
             }
             <section className="todo-list-section">
-                <h2>Incomplete Todos</h2>
+            {incompletedTodos.length > 0 && 
+                <h4>Incomplete Todos</h4>}
                 <ul className="todos-list">
-                    {todos.length > 0 && todos.map((todo, index) => (
+                    {incompletedTodos.length > 0 && incompletedTodos.map((todo, index) => (
                         <li id={"todo-" + todo.id}  key={todo.id} className="todo-item-card" style={{ background: calculateBackground(editingTodo?.progress || todo.progress) }}>
                             {editingTodo && editingTodo.id === todo.id ? (
                                 <form onSubmit={(e) => handleEditTodo(e, todo.id)} className="edit-todo-form">
@@ -229,14 +240,15 @@ function ViewTodos({decodedToken, logoutButton}) {
                             <div className="todo-card-options">
                                 {/* <button onClick={() => handleEditTodoDialogOpen(todo.id)}>Edit</button> */}
                                 <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
-                                <button type="button" onClick={() => handleDoneTodo(todo.id)}>Done</button>
+                                <button type="button" onClick={() => handleTodoStatus(todo)}>Done</button>
                             </div>
                         </li>
                     ))}
                 </ul>
             </section>
-            <section className="completed-todos-section todo-list-section">
-                <h2>Completed Todos</h2>
+            <section className="todo-list-section completed-todos-section">
+                {completedTodos.length > 0 && 
+                <h4>Completed Todos</h4>}
                 <ul className="completed-todos-list todos-list">
                     {completedTodos.length > 0 && completedTodos.map((todo, index) => (
                         <li id={"todo-" + todo.id}  key={todo.id} className="todo-item-card" style={{ background: calculateBackground(editingTodo?.progress || todo.progress) }}>
@@ -253,6 +265,12 @@ function ViewTodos({decodedToken, logoutButton}) {
                                     <div className="range-slider-container">
                                         <span className="slider-value">{editingTodo.progress}</span>
                                     </div>
+                                    <input
+                                        type="date"
+                                        value={newTodo.start}
+                                        className='start'
+                                        onChange={(e) => setNewTodo({ ...newTodo, start: e.target.value })}
+                                    />
                                     {(editingTodo.title !== todo.title || editingTodo.progress !== todo.progress) && <button type='submit'>Save</button>}
                                     <button type='button' onClick={() => { setEditingTodo(null) }}>Cancel</button>
                                 </form>
@@ -263,13 +281,12 @@ function ViewTodos({decodedToken, logoutButton}) {
                             )}
                             <div className="todo-card-options">
                                 <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
-                                <button type="button" onClick={() => handleDoneTodo(todo.id)}>Done</button>
+                                <button type="button" onClick={() => handleTodoStatus(todo)}>Undone</button>
                             </div>
                         </li>
                     ))}
                 </ul>
             </section>
-            <ViewCalendar todos={todos}></ViewCalendar>
         </div>
     );
 }

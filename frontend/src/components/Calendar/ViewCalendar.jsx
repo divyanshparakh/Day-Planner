@@ -1,12 +1,11 @@
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
+import timeGridPlugin from '@fullcalendar/timegrid'
 import React, { useState, useEffect } from 'react';
 
 function ViewCalendar(todos) {
     const [events, setEvents] = useState([]);
-    
-
     
     useEffect(() => {
         setEvents(todos.todos);
@@ -15,12 +14,21 @@ function ViewCalendar(todos) {
 
     function renderEventContent(eventInfo) {
         // console.log(eventInfo.event);
-        return (
-            <>
-                {/* <b>{eventInfo.timeText}</b> */}
-                <i>{eventInfo.event.title}</i>
-            </>
-        )
+        if (eventInfo.event.extendedProps.completed) {
+            return (
+                <>
+                    <strong><strike>{ eventInfo.event.title }</strike></strong>
+                </>
+            )
+        }
+        else {
+            return (
+                <>
+                    {/* <b>{eventInfo.timeText}</b> */}
+                    <strong>{ eventInfo.event.title }</strong>
+                </>
+            )
+        }
     }
 
     return (
@@ -30,6 +38,13 @@ function ViewCalendar(todos) {
                 initialView='dayGridMonth'
                 weekends={true}
                 events={events}
+                headerToolbar={{
+                    start: 'today',
+                    center: 'title',
+                    end: 'prev,next',
+                }}
+                titleFormat={{ year: 'numeric', month: 'long' }}
+                buttonText={{today: 'Today'}}
                 eventContent={renderEventContent}
                 // height={'100%'}
                 themeSystem='bootstrap5'

@@ -6,10 +6,10 @@
 
 The following items should be installed on your machine:
 
-✅ Docker          (Containerization)  
-✅ Docker Compose  (Service Orchestration Locally)  
-✅ NodeJS          (API and GUI Development)  
-✅ .NET Core       (API Gateway Development)  
+✅ Docker          (Containerization)
+✅ Docker Compose  (Service Orchestration Locally)
+✅ NodeJS          (API and GUI Development)
+✅ .NET Core       (API Gateway Development)
 
 ## Technology Stack
 
