@@ -157,8 +157,8 @@ function ViewTodos({decodedToken, logoutButton}) {
 
     return (
         <div className="scaffold">
-            <h3>Day Schedule</h3>
             <section className='upper-section'>
+                <h3>Day Schedule</h3>
                 { logoutButton }
             </section>
             <ViewCalendar todos={todos}></ViewCalendar>

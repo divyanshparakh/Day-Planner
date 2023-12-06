@@ -28,9 +28,17 @@
     
     .upper-section {
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
         margin-bottom: 10px;
+        .custom-button {
+            justify-self: center;
+            align-self: center;
+            flex: 1;
+        }
+        h3 {
+            flex: 7;
+        }
     }
 
     .search-todo {
