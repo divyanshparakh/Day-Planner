@@ -48,12 +48,13 @@ The following items should be installed on your machine:
 
 ## Technology Stack
 
-:heavy_check_mark: Node JS
-:heavy_check_mark: ReactJS
-:heavy_check_mark: Express JS
-:heavy_check_mark: Ocelot
-:heavy_check_mark: GraphQL
-:heavy_check_mark: PostgreSQL
+:heavy_check_mark: Node JS  
+:heavy_check_mark: ReactJS  
+:heavy_check_mark: Redux  
+:heavy_check_mark: Express JS  
+:heavy_check_mark: Ocelot  
+:heavy_check_mark: GraphQL  
+:heavy_check_mark: PostgreSQL  
 
 ## Install
 
