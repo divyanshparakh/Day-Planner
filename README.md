@@ -83,3 +83,10 @@ docker-compose up --build
 
 
 You can connect to the database via *PG-Admin* by entering the connection details from the ".env" file and you can also edit the "schema.sql" file in the "init-scripts" folder.
+
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
