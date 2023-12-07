@@ -2,12 +2,20 @@ import React, { useState, useEffect } from 'react';
 import './ViewTodos.scss';
 import api from '../../index';
 import ViewCalendar from '../Calendar/ViewCalendar';
+import { useAppSelector, useAppDispatch } from '../../store/hooks/index.ts';
+import { addTodo } from '../../store/slices/todos/index.ts';
 
 
 function ViewTodos({decodedToken, logoutButton}) {
-    const [todos, setTodos] = useState([]);
-    const [incompletedTodos, setIncompletedTodos] = useState([]);
-    const [completedTodos, setCompletedTodos] = useState([]);
+    const todos = useAppSelector((state) => state.todos);
+    const dispatch = useAppDispatch();
+    // const [todos, setTodos] = useState([]);
+    const incompletedTodos = useAppSelector((state) => state.todos.filter(function(todo) {
+        return todo.completed === false;
+    }));
+    const completedTodos = useAppSelector((state) => state.todos.filter(function(todo) {
+        return todo.completed;
+    }));
     const [isLoading, setIsLoading] = useState(true);
     const [openAddDialog, handleAddTodoDialogOpen] = useState(false);
     const [editingTodo, setEditingTodo] = useState({
@@ -32,13 +40,8 @@ function ViewTodos({decodedToken, logoutButton}) {
             });
             if(response.status === 200) {
                 // console.log(response.data);
-                setTodos(response.data);
-                setCompletedTodos((response.data).filter(function(todo) {
-                    return todo.completed;
-                }));
-                setIncompletedTodos((response.data).filter(function(todo) {
-                    return todo.completed === false;
-                }));
+                dispatch(addTodo(response.data));
+                // setTodos(response.data);
             }
             setIsLoading(false);
         } catch (error) {

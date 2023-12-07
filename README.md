@@ -9,7 +9,7 @@ Welcome to Day Planner – an all-in-one web application designed to enhance you
 - ⚡ **GraphQL for Efficient Data Consumption (Coming Soon):** Optimize data retrieval for a faster user experience.
 
 
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache-blue.svg)](LICENSE)
 
 ![alt text](Screenshot.png "Day Planner")
 
