@@ -2,13 +2,32 @@ import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import React, { useState, useEffect } from 'react';
+import { useAppSelector } from '../../store/hooks/index.ts';
 
-function ViewCalendar(todos) {
+function ViewCalendar() {
+    const todos = useAppSelector((state) => state.todos);
+    const forecast = useAppSelector((state) => state.forecast);
+
     const [events, setEvents] = useState([]);
     
     useEffect(() => {
-        setEvents(todos.todos);
-        // console.log(todos.todos);
+
+        if (events.length === 0) {
+            let combinedEvents = [...todos];
+            // console.log(forecast);
+            for (let index = 0; index < forecast.length; index++) {
+                const element = forecast[index];
+    
+                const newEvent = {
+                    start: element.date,
+                    imageurl: element.day.condition.icon,
+                };
+    
+                combinedEvents.push(newEvent);
+            }
+            console.log(combinedEvents);
+            setEvents(combinedEvents);
+        }
     });
 
     function renderEventContent(eventInfo) {
@@ -37,6 +56,8 @@ function ViewCalendar(todos) {
                 initialView='dayGridMonth'
                 weekends={true}
                 events={events}
+                handleWindowResize={true}
+                windowResizeDelay={200}
                 headerToolbar={{
                     start: 'today',
                     center: 'title',

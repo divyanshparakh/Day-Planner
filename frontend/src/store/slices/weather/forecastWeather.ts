@@ -1,8 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const addForecastWeather = (state, action) => {
-    // Constructing a new todos array immutably and return it
-    state.push(action.payload);
+    const data = action.payload;
+    if(state !== data)
+        return (state = data);
+    return state;
 }
 
 export const forecastWeatherSlice = createSlice({

@@ -102,7 +102,7 @@ function ViewTodos({decodedToken, logoutButton}) {
         }
     };
 
-    const handleTodoStatus = async (todo) => {
+    const handleToggleTodoStatus = async (todo) => {
         try {
             await api.put(`/todos/${todo.id}`, {
                 title: todo.title,
@@ -164,11 +164,11 @@ function ViewTodos({decodedToken, logoutButton}) {
                 <h3>Day Schedule</h3>
                 { logoutButton }
             </section>
-            <ViewCalendar todos={todos}></ViewCalendar>
+            <ViewCalendar></ViewCalendar>
             <input
                 className='search-todo'
                 type="text"
-                placeholder="Search todos..."
+                placeholder="Search Todos..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -243,7 +243,7 @@ function ViewTodos({decodedToken, logoutButton}) {
                             <div className="todo-card-options">
                                 {/* <button onClick={() => handleEditTodoDialogOpen(todo.id)}>Edit</button> */}
                                 <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
-                                <button type="button" onClick={() => handleTodoStatus(todo)}>Done</button>
+                                <button type="button" onClick={() => handleToggleTodoStatus(todo)}>Done</button>
                             </div>
                         </li>
                     ))}
@@ -284,7 +284,7 @@ function ViewTodos({decodedToken, logoutButton}) {
                             )}
                             <div className="todo-card-options">
                                 <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
-                                <button type="button" onClick={() => handleTodoStatus(todo)}>Undone</button>
+                                <button type="button" onClick={() => handleToggleTodoStatus(todo)}>Undone</button>
                             </div>
                         </li>
                     ))}

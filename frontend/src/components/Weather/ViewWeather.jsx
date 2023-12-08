@@ -2,10 +2,19 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './ViewWeather.scss';
 import { SearchResultsList } from "./SearchResultsList";
+import { useAppSelector, useAppDispatch } from '../../store/hooks/index.ts';
+import { addWeather } from '../../store/slices/weather/currentWeather.ts';
+import { addForecast } from '../../store/slices/weather/forecastWeather.ts';
+import { addLocation } from '../../store/slices/weather/location.ts';
 
 function ViewWeather() {
+    const dispatch = useAppDispatch();
+    
+    const currentWeather = useAppSelector((state) => state.weather);
+    const currentForecast = useAppSelector((state) => state.forecast);
+    const currentLocation = useAppSelector((state) => state.location);
     const [locationLists, setLocationLists] = useState();
-    const [currentWeather, setCurrentWeather] = useState();
+    // const [currentWeather, setCurrentWeather] = useState();
 	const selectedLocation = localStorage.getItem('selected-loc');
     const apiKey = process.env.REACT_APP_WEATHER_API_KEY;
 
@@ -70,14 +79,17 @@ function ViewWeather() {
             const response = await weatherApi.get("/forecast.json", {
                 params: {
                     q: selectedLocation['lat'] + ',' + selectedLocation['lon'],
-                    days: 1
+                    days: 3
                 }
             });
 
             if(response.status === 200) {
                 const results = response.data;
                 console.log(results);
-                setCurrentWeather(results);
+                dispatch(addWeather(results['current']));
+                dispatch(addForecast(results['forecast']['forecastday']));
+                dispatch(addLocation(results['location']));
+                // setCurrentWeather(results);
                 setLocationLists(null);
                 document.getElementById('search-location').value = "";
             } else {
@@ -111,33 +123,33 @@ function ViewWeather() {
             {
                 currentWeather && Object.keys(currentWeather).length > 0 && (
                     <div className="selected-location-weather">
-                        <img src={currentWeather['current']['condition']['icon']} alt="" srcset="" height={35} />
+                        <img src={currentWeather['condition']['icon']} alt="" srcset="" height={35} />
                         <p className='location' onClick={(e) => {handleChangeLocation()}}>
-                            {currentWeather['location']['name']}
+                            {currentLocation['name']}
                         </p>
                         <p>
-                            {currentWeather['current']['feelslike_c']}&deg;C
+                            {currentWeather['feelslike_c']}&deg;C
                         </p>
                         <p>
-                            {currentWeather['current']['condition']['text']}
+                            {currentWeather['condition']['text']}
                         </p>
                         <p>
-                            Gust: {currentWeather['current']['gust_kph']}
+                            Gust: {currentWeather['gust_kph']}
                         </p>
                         <p>
-                            Humidity: {currentWeather['current']['humidity']}%
+                            Humidity: {currentWeather['humidity']}%
                         </p>
                         <p>
-                            Percipitation: {currentWeather['current']['precip_mm']}mm
+                            Percipitation: {currentWeather['precip_mm']}mm
                         </p>
                         <p>
-                            UV: {currentWeather['current']['uv']}/10
+                            UV: {currentWeather['uv']}/10
                         </p>
                         <p>
-                            Wind: {currentWeather['current']['wind_kph']}kph
+                            Wind: {currentWeather['wind_kph']}kph
                         </p>
                         <p>
-                            Rain: {currentWeather['forecast']['forecastday'][0]['day']['daily_will_it_rain']}%
+                            Rain: {currentForecast[0]['day']['daily_will_it_rain']}%
                         </p>
                     </div>
                 )

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const addItemToArray = (state, action) => {
+const addEventsToArray = (state, action) => {
     const data = action.payload;
     // Constructing a new todos array immutably and return it
     if(state !== data)
@@ -8,7 +8,7 @@ const addItemToArray = (state, action) => {
     return state;
 }
 
-const deleteItemToArray = (state, action) => {
+const removeEventsToArray = (state, action) => {
     // Constructing a new todos array immutably and return it
     return state.filter(todo => todo.id !== action.payload);
 }
@@ -17,10 +17,10 @@ export const todosSlice = createSlice({
     initialState: [],
     name: 'weather',
     reducers: {
-        addTodo: addItemToArray,
-        deleteTodo: deleteItemToArray
+        addEvent: addEventsToArray,
+        removeEvent: removeEventsToArray
     },
 });
 
-export const { addTodo, deleteTodo } = todosSlice.actions;
+export const { addEvent: addTodo, removeEvent: deleteTodo } = todosSlice.actions;
 export default todosSlice.reducer;
