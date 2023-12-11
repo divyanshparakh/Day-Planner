@@ -7,7 +7,7 @@ import { addWeather } from '../../store/slices/weather/currentWeather.ts';
 import { addForecast } from '../../store/slices/weather/forecastWeather.ts';
 import { addLocation } from '../../store/slices/weather/location.ts';
 
-function ViewWeather() {
+function ViewWeather({ logoutButton }) {
     const dispatch = useAppDispatch();
     
     const currentWeather = useAppSelector((state) => state.weather);
@@ -90,7 +90,6 @@ function ViewWeather() {
                 dispatch(addForecast(results['forecast']['forecastday']));
                 dispatch(addLocation(results['location']));
                 // setCurrentWeather(results);
-                setLocationLists(null);
                 document.getElementById('search-location').value = "";
             } else {
                 console.error("Error fetching weather: Unexpected status code", response.status);
@@ -106,6 +105,7 @@ function ViewWeather() {
     }
 
     const handleResultClick = async (result) => {
+        setLocationLists(null);
         localStorage.setItem('selected-loc', JSON.stringify(result));
         await getCurrentWeather(result);
     };
@@ -160,7 +160,7 @@ function ViewWeather() {
                 </div>
                 { locationLists && locationLists.length > 0 && <SearchResultsList results={locationLists} handleResultClick={handleResultClick} /> }
             </div>
-            
+            { logoutButton }       
         </div>
     );
 }

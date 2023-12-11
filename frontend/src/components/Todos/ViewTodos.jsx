@@ -6,16 +6,27 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks/index.ts';
 import { addTodo } from '../../store/slices/todos/index.ts';
 
 
-function ViewTodos({decodedToken, logoutButton}) {
+function ViewTodos({decodedToken}) {
     const todos = useAppSelector((state) => state.todos);
     const dispatch = useAppDispatch();
     // const [todos, setTodos] = useState([]);
-    const incompletedTodos = useAppSelector((state) => state.todos.filter(function(todo) {
-        return todo.completed === false;
-    }));
-    const completedTodos = useAppSelector((state) => state.todos.filter(function(todo) {
-        return todo.completed;
-    }));
+    const incompletedTodos = useAppSelector((state) => {
+        if(state.todos.length > 0) {
+            state.todos.filter(function(todo) {
+                return todo.completed === false;
+            })
+        }
+        return [];
+    });
+    const completedTodos = useAppSelector((state) => {
+        if(state.todos.length > 0) {
+            console.log(state.todos.length);
+            state.todos.filter(function(todo) {
+                return todo.completed;
+            })
+        }
+        return [];
+    });
     const [isLoading, setIsLoading] = useState(true);
     const [openAddDialog, handleAddTodoDialogOpen] = useState(false);
     const [editingTodo, setEditingTodo] = useState({
@@ -162,7 +173,6 @@ function ViewTodos({decodedToken, logoutButton}) {
         <div className="scaffold">
             <section className='upper-section'>
                 <h3>Day Schedule</h3>
-                { logoutButton }
             </section>
             <ViewCalendar></ViewCalendar>
             <input

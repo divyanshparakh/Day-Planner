@@ -11,12 +11,12 @@ function ViewCalendar() {
     const [events, setEvents] = useState([]);
     
     useEffect(() => {
-
         if (events.length === 0) {
             let combinedEvents = [...todos];
             // console.log(forecast);
             for (let index = 0; index < forecast.length; index++) {
                 const element = forecast[index];
+                // console.log(element);
     
                 const newEvent = {
                     start: element.date,
@@ -25,21 +25,51 @@ function ViewCalendar() {
     
                 combinedEvents.push(newEvent);
             }
-            console.log(combinedEvents);
+            // console.log(combinedEvents);
             setEvents(combinedEvents);
         }
     });
 
-    function renderEventContent(eventInfo) {
-        // console.log(eventInfo.event);
-        if (eventInfo.event.extendedProps.completed) {
+    function renderEventContent(eventInfo, eventElement) {
+
+        if (eventInfo.event._def.extendedProps.imageurl) {
+            const imageUrl = eventInfo.event._def.extendedProps.imageurl;
+            const imgTag = `<img src="${imageUrl}" width="16" height="16" onerror="console.error('Failed to load image:', '${imageUrl}')">`;
+            console.log(eventInfo.event._def.extendedProps.imageurl);
+
+            if(eventInfo.event.title && eventInfo.event.extendedProps.completed) {
+                return (
+                    <>
+                        <strong><strike>{ eventInfo.event.title }</strike></strong>
+                        <img src={imageUrl} width={4} height={4} />
+                    </>
+                )
+            }
+            else if(eventInfo.event.title) {
+                return (
+                    <>
+                        {/* <b>{eventInfo.timeText}</b> */}
+                        <strong>{ eventInfo.event.title }</strong>
+                        <img src={imageUrl} />
+                    </>
+                )
+            }
+            else {
+                return (
+                    <>
+                        <img src={imageUrl} />
+                    </>
+                )
+            }
+        }
+        else if(eventInfo.event.title && eventInfo.event.extendedProps.completed) {
             return (
                 <>
                     <strong><strike>{ eventInfo.event.title }</strike></strong>
                 </>
             )
         }
-        else {
+        else if(eventInfo.event.titles) {
             return (
                 <>
                     {/* <b>{eventInfo.timeText}</b> */}
@@ -47,6 +77,13 @@ function ViewCalendar() {
                 </>
             )
         }
+        else {
+            return (
+                <>
+                </>
+            )
+        }
+        // console.log(eventInfo.event);
     }
 
     return (
@@ -64,9 +101,8 @@ function ViewCalendar() {
                     end: 'prev,next',
                 }}
                 titleFormat={{ year: 'numeric', month: 'long' }}
-                buttonText={{today: 'Today'}}
+                buttonText={{ today: 'Today' }}
                 eventContent={renderEventContent}
-                // height={'100%'}
                 themeSystem='bootstrap5'
                 navLinks={true}
             />

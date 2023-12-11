@@ -12,7 +12,7 @@
     overflow: hidden;
     .selected-location-weather {
         display: flex;
-        justify-content: space-evenly;
+        justify-content: space-between;
         width: 80%;
         p {
             color: whitesmoke;
@@ -21,7 +21,6 @@
             cursor: pointer;
         }
     }
-
     .search-location {
         .search-location-wrapper {
             background-color: #8d80f6;
@@ -42,7 +41,6 @@
                     font-size: 20px;
                 }
             }
-
         }    
         .results-list {
             display: flex;
@@ -53,20 +51,29 @@
             background: none;
             border-radius: 8px;
             overflow: hidden;
+            z-index: 3;
+            border: #8d80f6 2px solid;
             .search-location-result {
-                padding: 10px 20px;
                 cursor: pointer;
                 display: flex;
-                justify-content: space-between;
-                font-size: 10px;
-                flex-wrap: wrap;
-                border: 0.1px solid rgba(0, 0, 0, 0.1);
-                background-color: rgba(0, 0, 0, 0.8);
+                flex-direction: column;
+                justify-content: space-around;
+                align-items: center;
+                background-color: rgba(0, 0, 0, 0.95);
+                padding: 10px;
                 p {
                     color: whitesmoke;
+                    font-size: 15px;
+                    padding: 0;
+                    margin: 0;
+                }
+                .country {
+                    align-self: flex-end;
+                    align-content: flex-end;
+                    font-size: 10px;
                 }
                 &:hover {
-                    background-color: rgba(255, 253, 253, 0.2);
+                    background-color: rgba(32, 31, 31, 0.9);
                 }
             }
         }

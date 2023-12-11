@@ -48,8 +48,8 @@ function HomePage() {
 
     return (
         <div className="homepage">
-			<ViewWeather></ViewWeather>
-            <ViewTodos decodedToken={decodedToken.email} logoutButton={logoutButton}></ViewTodos>
+			<ViewWeather logoutButton={logoutButton}></ViewWeather>
+            <ViewTodos decodedToken={decodedToken.email}></ViewTodos>
         </div>
     );
 }
