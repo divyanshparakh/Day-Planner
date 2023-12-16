@@ -1,6 +1,6 @@
-import React, { Component, useState } from "react";
-
-import api from "../index";
+import React, { useState, useEffect } from "react";
+import jwtDecode from "jwt-decode";
+import api from "../../index";
 
 function LoginForm({btn}) {
     const [email, setEmail] = useState('');
@@ -16,6 +16,8 @@ function LoginForm({btn}) {
             });
             // Assuming the response contains the token upon successful login
             const token = response.headers.authorization;
+			const decoded = jwtDecode(token);
+            // console.log(decoded['email']);
             
             // You can now handle the token, like storing it in localStorage, etc.
             if(token !== undefined) {
@@ -24,6 +26,7 @@ function LoginForm({btn}) {
             }
             // Perform actions upon successful login
         } catch (error) {
+            console.log(error.response);
 			setError(error.response.data.message.replace(/"/g, ""));
             // Handle error, show a message, etc.
         }
@@ -51,7 +54,7 @@ function LoginForm({btn}) {
             <button className="custom-button" type="submit">LOGIN</button>
             <p className="error">{error}</p>
             <div className="text">
-                <a href="">Forgot Password?</a>
+                <a href="/forgot">Forgot Password?</a>
             </div>
             <div className="text">Not Registered?</div>
             <br />

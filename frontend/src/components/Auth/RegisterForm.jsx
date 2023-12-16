@@ -1,5 +1,5 @@
 import React from "react";
-import api from "..";
+import api from "../..";
 import { useState } from "react";
 
 function RegisterForm({ btn }) {

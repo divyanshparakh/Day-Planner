@@ -6,10 +6,11 @@ import { useAppSelector, useAppDispatch } from '../../store/hooks/index.ts';
 import { addTodo } from '../../store/slices/todos/index.ts';
 
 
-function ViewTodos({decodedToken}) {
+function ViewTodos() {
     const todos = useAppSelector((state) => state.todos);
     const dispatch = useAppDispatch();
     // const [todos, setTodos] = useState([]);
+    
     const incompletedTodos = useAppSelector((state) => {
         if(state.todos.length > 0) {
             state.todos.filter(function(todo) {
@@ -18,23 +19,27 @@ function ViewTodos({decodedToken}) {
         }
         return [];
     });
+
     const completedTodos = useAppSelector((state) => {
         if(state.todos.length > 0) {
-            console.log(state.todos.length);
+            // console.log(state.todos.length);
             state.todos.filter(function(todo) {
                 return todo.completed;
             })
         }
         return [];
     });
+
     const [isLoading, setIsLoading] = useState(true);
     const [openAddDialog, handleAddTodoDialogOpen] = useState(false);
+
     const [editingTodo, setEditingTodo] = useState({
         id: '0',
         title: '',
         completed: false,
         progress: 0, // Assuming progress is a number, change it according to your requirements
     });
+
     const [newTodo, setNewTodo] = useState({
         id: '0',
         title: '',
@@ -42,12 +47,14 @@ function ViewTodos({decodedToken}) {
         progress: 0, // Assuming progress is a number, change it according to your requirements
         start: '00-00-0000'
     });
+
     const [searchTerm, setSearchTerm] = useState();
+	const storedToken = localStorage.getItem('token');
 
     const getTodos = async () => {
         try {
             const response = await api.get("/todos", {
-                decodedToken,
+                storedToken,
             });
             if(response.status === 200) {
                 // console.log(response.data);
@@ -59,6 +66,8 @@ function ViewTodos({decodedToken}) {
             if (error.response && error.response.status === 401) {
                 // Handle 401 Unauthorized error, e.g., redirect to login page
                 localStorage.removeItem('token');
+            } else if(error.response.status === 420) {
+                console.log("Too Many Request");
             } else {
                 console.error("Error fetching todos:", error);
                 setIsLoading(true);
@@ -69,7 +78,7 @@ function ViewTodos({decodedToken}) {
     const handleCreateTodo = async () => {
         setEditingTodo(null);
         try {
-            const response = await api.post("/todos", {
+            await api.post("/todos", {
                 ...newTodo,
             });
             setNewTodo({
@@ -164,8 +173,6 @@ function ViewTodos({decodedToken}) {
     if (isLoading) {
         return <div className="loading">Loading...</div>;
     }
-
-    const showCompleted = false;
 
     // const filteredTodos = showCompleted ? completedTodos : todos.filter(todo => todo.title.toLowerCase().includes(searchTerm.toLowerCase()));
 

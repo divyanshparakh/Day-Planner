@@ -1,0 +1,25 @@
+.sidebar {
+    height: 100vh;
+    position: fixed;
+    max-width: 70px;
+    left: 0;
+    top: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    border: 1.5px solid #e3507d;
+    padding: 7px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    overflow: hidden;
+    z-index: 5;
+
+    img {
+        height: 50px;
+        width: 50px;
+    }
+    p {
+        color: whitesmoke;
+    }
+}

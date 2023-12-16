@@ -3,6 +3,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import interactionPlugin from '@fullcalendar/interaction'
 import React, { useState, useEffect } from 'react';
 import { useAppSelector } from '../../store/hooks/index.ts';
+import './ViewCalendar.scss';
 
 function ViewCalendar() {
     const todos = useAppSelector((state) => state.todos);
@@ -11,37 +12,36 @@ function ViewCalendar() {
     const [events, setEvents] = useState([]);
     
     useEffect(() => {
-        if (events.length === 0) {
+        if(todos) {
             let combinedEvents = [...todos];
             // console.log(forecast);
             for (let index = 0; index < forecast.length; index++) {
                 const element = forecast[index];
                 // console.log(element);
-    
+
                 const newEvent = {
                     start: element.date,
                     imageurl: element.day.condition.icon,
                 };
-    
+
                 combinedEvents.push(newEvent);
             }
             // console.log(combinedEvents);
             setEvents(combinedEvents);
         }
-    });
+    }, [events.length, forecast, todos]);
 
     function renderEventContent(eventInfo, eventElement) {
 
         if (eventInfo.event._def.extendedProps.imageurl) {
             const imageUrl = eventInfo.event._def.extendedProps.imageurl;
-            const imgTag = `<img src="${imageUrl}" width="16" height="16" onerror="console.error('Failed to load image:', '${imageUrl}')">`;
-            console.log(eventInfo.event._def.extendedProps.imageurl);
+            // const imgTag = `<img src="${imageUrl}" width="16" height="16" onerror="console.error('Failed to load image:', '${imageUrl}')">`;
 
             if(eventInfo.event.title && eventInfo.event.extendedProps.completed) {
                 return (
                     <>
                         <strong><strike>{ eventInfo.event.title }</strike></strong>
-                        <img src={imageUrl} width={4} height={4} />
+                        <img src={imageUrl} width={4} height={4} alt='' />
                     </>
                 )
             }
@@ -50,14 +50,14 @@ function ViewCalendar() {
                     <>
                         {/* <b>{eventInfo.timeText}</b> */}
                         <strong>{ eventInfo.event.title }</strong>
-                        <img src={imageUrl} />
+                        <img src={imageUrl} alt='' />
                     </>
                 )
             }
             else {
                 return (
                     <>
-                        <img src={imageUrl} />
+                        <img src={imageUrl} alt='' />
                     </>
                 )
             }

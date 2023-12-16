@@ -3,13 +3,15 @@
     padding: 7px;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    margin: 0rem auto;
     border: 1.5px solid #e3507d;
     display: flex;
-    flex-direction: row;
     justify-content: space-between;
     align-items: center;
     overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: calc(100vw - 90px) !important;
     .selected-location-weather {
         display: flex;
         justify-content: space-between;

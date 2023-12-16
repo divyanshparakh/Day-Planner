@@ -85,7 +85,7 @@ function ViewWeather({ logoutButton }) {
 
             if(response.status === 200) {
                 const results = response.data;
-                console.log(results);
+                // console.log(results);
                 dispatch(addWeather(results['current']));
                 dispatch(addForecast(results['forecast']['forecastday']));
                 dispatch(addLocation(results['location']));
