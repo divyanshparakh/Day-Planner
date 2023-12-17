@@ -20,7 +20,7 @@ function ViewWeather({ logoutButton }) {
 
 	useEffect(() => {
         if(selectedLocation) {
-            console.log(selectedLocation);
+            // console.log(selectedLocation);
             getCurrentWeather(selectedLocation);
         }
 	}, [selectedLocation]);
@@ -134,33 +134,31 @@ function ViewWeather({ logoutButton }) {
                             {currentWeather['condition']['text']}
                         </p>
                         <p>
-                            Gust: {currentWeather['gust_kph']}
+                            Gust {currentWeather['gust_kph']}
                         </p>
                         <p>
-                            Humidity: {currentWeather['humidity']}%
+                            Humidity {currentWeather['humidity']}%
                         </p>
                         <p>
-                            Percipitation: {currentWeather['precip_mm']}mm
+                            Percip {currentWeather['precip_mm']}mm
                         </p>
                         <p>
-                            UV: {currentWeather['uv']}/10
+                            UV {currentWeather['uv']}/10
                         </p>
                         <p>
-                            Wind: {currentWeather['wind_kph']}kph
+                            W {currentWeather['wind_kph']}kph
                         </p>
                         <p>
-                            Rain: {currentForecast[0]['day']['daily_will_it_rain']}%
+                            Rain {currentForecast[0]['day']['daily_will_it_rain']}%
                         </p>
                     </div>
                 )
             }
-            <div className="search-location">
-                <div className="search-location-wrapper">
-                    <input type="text" id="search-location"  placeholder="Search Location" pattern="[A-Za-z]" onChange={async (e) => handleSearchLocation(e.target.value)} />
-                </div>
+            <div className="search-location-wrapper">
+                <input type="text" id="search-location"  placeholder="Search Location" pattern="[A-Za-z]" onChange={async (e) => handleSearchLocation(e.target.value)} />
                 { locationLists && locationLists.length > 0 && <SearchResultsList results={locationLists} handleResultClick={handleResultClick} /> }
             </div>
-            { logoutButton }       
+            { logoutButton }
         </div>
     );
 }

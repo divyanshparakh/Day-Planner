@@ -6,13 +6,13 @@
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     max-width: 60vw;
-    height: 100%;
-    margin: 1.5rem auto;
+    margin: 6rem auto 3rem auto;
     border: 1.5px solid #e3507d;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-content: center;
+    width: 80%;
 
     h3, h4 {
         color: #e3507d;
@@ -23,17 +23,59 @@
             border: none;
         }
     }
-    
-    .upper-section {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-bottom: 10px;
-        .custom-button {
-            justify-self: center;
-            align-self: center;
-            flex: 1;
+
+    .calendar {
+        --fc-event-bg-color: transparent;
+        --fc-button-active-bg-color: rgba(20, 1, 86, 1);
+        --fc-button-bg-color: rgba(20, 1, 86, 1);
+        --fc-button-text-color: #e3507d;
+        --fc-border-color: #e3507d;
+        --fc-button-border-color: #e3507d;
+        --fc-event-border-color: transparent;
+        .fc {
+            .fc-toolbar-title {
+                color: whitesmoke;
+            }
+            .fc-col-header-cell-cushion {
+                cursor: default;
+            }
+            .fc-scrollgrid-sync-inner {
+                display: flex;
+                justify-content: flex-start;
+                align-items: flex-start;
+            }
+            a {
+                color: #8d80f6;
+                .fc-event-main {
+                    position: relative;
+                    strong > strike {
+                        text-decoration-thickness: 3px;
+                    }
+                    .fc-event-main-img{
+                        height: 50px;
+                        position: absolute;
+                        left: 2.5vw;
+                        top: -10px;
+                    }
+                }
+            }
+            .fc-daygrid-day {
+                overflow: hidden;
+                height: 50px;
+                .fc-daygrid-day-number {
+                    color: #8d80f6;
+                    font-weight: 600;
+                    &:hover {
+                        // background-color: #140156;
+                        color: whitesmoke;
+                    }
+                }
+            }
         }
+    }
+
+    .title {
+        text-align: center;
     }
 
     .search-todo {
@@ -152,14 +194,15 @@
             background-color: #eee;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin: 15px;
+            padding: 10px;
+            margin: 15px auto;
             transition: background-color 0.3s ease-in-out;
             display: flex;
             flex: row;
             justify-content: space-between;
             align-items: center;
-            min-height: 2rem;
+            max-width: 600px;
+            height: 100%;
             &:hover {
                 background-color: #f0f0f0;
             }

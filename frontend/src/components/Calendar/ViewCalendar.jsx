@@ -13,6 +13,7 @@ function ViewCalendar() {
     
     useEffect(() => {
         if(todos) {
+            // console.log(todos);
             let combinedEvents = [...todos];
             // console.log(forecast);
             for (let index = 0; index < forecast.length; index++) {
@@ -32,48 +33,25 @@ function ViewCalendar() {
     }, [events.length, forecast, todos]);
 
     function renderEventContent(eventInfo, eventElement) {
-
-        if (eventInfo.event._def.extendedProps.imageurl) {
-            const imageUrl = eventInfo.event._def.extendedProps.imageurl;
-            // const imgTag = `<img src="${imageUrl}" width="16" height="16" onerror="console.error('Failed to load image:', '${imageUrl}')">`;
-
-            if(eventInfo.event.title && eventInfo.event.extendedProps.completed) {
+        if(eventInfo.event.title) {
+            if(eventInfo.event.extendedProps.completed)
                 return (
                     <>
                         <strong><strike>{ eventInfo.event.title }</strike></strong>
-                        <img src={imageUrl} width={4} height={4} alt='' />
                     </>
                 )
-            }
-            else if(eventInfo.event.title) {
+            else
                 return (
                     <>
-                        {/* <b>{eventInfo.timeText}</b> */}
                         <strong>{ eventInfo.event.title }</strong>
-                        <img src={imageUrl} alt='' />
                     </>
                 )
-            }
-            else {
-                return (
-                    <>
-                        <img src={imageUrl} alt='' />
-                    </>
-                )
-            }
         }
-        else if(eventInfo.event.title && eventInfo.event.extendedProps.completed) {
+        else if(eventInfo.event._def.extendedProps.imageurl) {
+            const imageUrl = eventInfo.event._def.extendedProps.imageurl;
             return (
                 <>
-                    <strong><strike>{ eventInfo.event.title }</strike></strong>
-                </>
-            )
-        }
-        else if(eventInfo.event.titles) {
-            return (
-                <>
-                    {/* <b>{eventInfo.timeText}</b> */}
-                    <strong>{ eventInfo.event.title }</strong>
+                    <img src={imageUrl} className='fc-event-main-img' alt='' />
                 </>
             )
         }
@@ -87,7 +65,7 @@ function ViewCalendar() {
     }
 
     return (
-        <div className='calendar'>
+        <div className='calendar' id='calendar'>
             <FullCalendar
                 plugins={[dayGridPlugin, interactionPlugin]}
                 initialView='dayGridMonth'
@@ -98,10 +76,20 @@ function ViewCalendar() {
                 headerToolbar={{
                     start: 'today',
                     center: 'title',
+                    end: 'dayGridMonth',
+                }}
+                footerToolbar={{
                     end: 'prev,next',
                 }}
+                /*
+                headerToolbar={{
+                    start: 'today',
+                    center: 'title',
+                    end: 'prev,next',
+                }}
+                */
                 titleFormat={{ year: 'numeric', month: 'long' }}
-                buttonText={{ today: 'Today' }}
+                buttonText={{ today: 'Today', month: 'View' }}
                 eventContent={renderEventContent}
                 themeSystem='bootstrap5'
                 navLinks={true}

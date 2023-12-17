@@ -23,17 +23,18 @@ exports.getTodos = function (req, res, next) {
 exports.addTodos = function(req, res, next) {
     // console.log(req.email);
     // console.log(req.body);
-    const { title, start, progress } = req.body;
+    const { title, start, progress, completed } = req.body;
     const email = req.email; // Added to req after verifying the jwt in the server itself
     const id = uuidv4();
     // console.log(id);
     try {
-        todos_pool.query("INSERT INTO todos (id, email, title, start, progress) VALUES ($1, $2, $3, $4, $5)",
+        todos_pool.query("INSERT INTO todos (id, email, title, start, completed, progress) VALUES ($1, $2, $3, $4, $5, $6)",
             [
                 id,
                 email,
                 title,
                 start,
+                completed,
                 progress
             ],
             (err, results) => {
@@ -93,7 +94,7 @@ exports.editTodos = function(req, res, next) {
 }
 
 exports.deleteTodos = function(req, res, next) {
-    console.log(req.params);
+    // console.log(req.params);
     const id = req.params.id;
     
     try {

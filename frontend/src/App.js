@@ -1,23 +1,23 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "./App.scss";
 import Auth from "./components/Auth/Auth";
-import HomePage from './components/HomePage';
 import Sidebar from "./components/Sidebar/Sidebar";
 import ViewCalendar from "./components/Calendar/ViewCalendar";
 import ViewTodos from "./components/Todos/ViewTodos";
 import ViewWeather from "./components/Weather/ViewWeather";
+import NoPage from "./components/NoPage/NoPage";
 import jwtDecode from "jwt-decode";
 import api from './index';
-import { useAppSelector } from './store/hooks/index.ts';
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 
 function App() {
 	const storedToken = localStorage.getItem('token');
-	const userInfo = useAppSelector((state) => state.user);
+	const [email, setEmail] = useState('');
 
 	useEffect(() => {
 		if (storedToken) {
 			const decoded = jwtDecode(storedToken);
+			setEmail(decoded['email']);
 			const expirationTime = decoded.exp * 1000; // Convert to milliseconds
 
 			// Check if the token is about to expire in, say, the next 5 minutes
@@ -56,12 +56,13 @@ function App() {
 	return (
 		<div className="App">
 			<ViewWeather logoutButton={logoutButton}></ViewWeather>
-			<Sidebar></Sidebar>
-			<BrowserRouter>
+			<Sidebar email={email}></Sidebar>
+			<BrowserRouter forceRefresh={false}>
 				<Routes>
-					<Route path="/auth" element={ storedToken ? <Navigate to="/calendar" /> : <Auth></Auth> }></Route>
+					<Route path="/auth" lazy={true} element={ storedToken ? <Navigate to="/" /> : <Auth></Auth> }></Route>
+					<Route index path="/" lazy={true} element={ storedToken ? <ViewTodos></ViewTodos> : <Navigate to="/auth" /> } />
 					<Route index path="/calendar" element={ storedToken ? <ViewCalendar></ViewCalendar> : <Navigate to="/auth" /> } />
-					<Route path="/todos" element={ storedToken ? <ViewTodos></ViewTodos> : <Navigate to="/auth" /> } />
+					<Route path="*" element={<NoPage></NoPage>} />
 				</Routes>
 			</BrowserRouter>
 		</div>

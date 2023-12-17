@@ -26,7 +26,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 const limiter = rateLimit({
   windowMs: 1 * 60 * 1000, // 1 minute
-  max: 100, // 100 requests,
+  max: 200, // 100 requests,
 });
 
 

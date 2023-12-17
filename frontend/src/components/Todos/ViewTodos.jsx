@@ -9,23 +9,23 @@ import { addTodo } from '../../store/slices/todos/index.ts';
 function ViewTodos() {
     const todos = useAppSelector((state) => state.todos);
     const dispatch = useAppDispatch();
+    const [searchTerm, setSearchTerm] = useState('');
     // const [todos, setTodos] = useState([]);
     
     const incompletedTodos = useAppSelector((state) => {
         if(state.todos.length > 0) {
-            state.todos.filter(function(todo) {
-                return todo.completed === false;
-            })
+            return state.todos.filter(function(todo) {
+                return (todo.completed === false && (todo.title.includes(searchTerm) || todo.start.includes(searchTerm)));
+            });
         }
         return [];
     });
 
     const completedTodos = useAppSelector((state) => {
         if(state.todos.length > 0) {
-            // console.log(state.todos.length);
-            state.todos.filter(function(todo) {
-                return todo.completed;
-            })
+            return state.todos.filter(function(todo) {
+                return (todo.completed === true && (todo.title.includes(searchTerm) || todo.start.includes(searchTerm)));
+            });
         }
         return [];
     });
@@ -38,6 +38,7 @@ function ViewTodos() {
         title: '',
         completed: false,
         progress: 0, // Assuming progress is a number, change it according to your requirements
+        start: ''
     });
 
     const [newTodo, setNewTodo] = useState({
@@ -45,10 +46,9 @@ function ViewTodos() {
         title: '',
         completed: false,
         progress: 0, // Assuming progress is a number, change it according to your requirements
-        start: '00-00-0000'
+        start: ''
     });
 
-    const [searchTerm, setSearchTerm] = useState();
 	const storedToken = localStorage.getItem('token');
 
     const getTodos = async () => {
@@ -86,6 +86,7 @@ function ViewTodos() {
                 title: "",
                 start: "",
                 progress: 0,
+                completed: false,
             });
             handleAddTodoDialogOpen(false);
             getTodos();
@@ -99,7 +100,8 @@ function ViewTodos() {
             await api.put(`/todos/${editingTodo.id}`, {
                 title: editingTodo.title,
                 completed: editingTodo.completed,
-                progress: editingTodo.progress
+                progress: editingTodo.progress,
+                start: editingTodo.start,
             })
             .then(
                 setEditingTodo(null)
@@ -153,7 +155,6 @@ function ViewTodos() {
 
     useEffect(() => {
         getTodos();
-        // console.log(decodedToken);
         const handleKeyDown = (event) => {
             if (event.key === 'Escape') {
             // Close the add todo dialog
@@ -178,9 +179,7 @@ function ViewTodos() {
 
     return (
         <div className="scaffold">
-            <section className='upper-section'>
-                <h3>Day Schedule</h3>
-            </section>
+            <h3 className='title'>Day Schedule</h3>
             <ViewCalendar></ViewCalendar>
             <input
                 className='search-todo'
@@ -215,7 +214,7 @@ function ViewTodos() {
                             type="date"
                             value={newTodo.start}
                             className='start'
-                            onChange={(e) => setNewTodo({ ...newTodo, start: e.target.value })}
+                            onChange={(e) => setNewTodo({ ...newTodo, start: e.target.value, completed: false })}
                         />
                         {newTodo.title && <button onClick={handleCreateTodo}>Add</button>}
                         <button type='submit'>Cancel</button>
@@ -233,7 +232,7 @@ function ViewTodos() {
                                     <input
                                         id={"todo-" + todo.id}
                                         type="text"
-                                        value={editingTodo.title}
+                                        value={todo.title}
                                         className='title'
                                         onChange={(e) => setEditingTodo({ ...editingTodo, title: e.target.value })}
                                         autoFocus
@@ -243,12 +242,18 @@ function ViewTodos() {
                                             type="range"
                                             min={0}
                                             max={100}
-                                            value={editingTodo.progress}
+                                            value={todo.progress}
                                             className='slider'
                                             onChange={(e) => setEditingTodo({ ...editingTodo, progress: parseInt(e.target.value, 10) })}
                                         />
                                         <span className="slider-value">{editingTodo.progress}</span>
                                     </div>
+                                    <input
+                                        type="date"
+                                        value={todo.start}
+                                        className='start'
+                                        onChange={(e) => setEditingTodo({ ...editingTodo, start: e.target.value})}
+                                    />
                                     {(editingTodo.title !== todo.title || editingTodo.progress !== todo.progress) && <button type='submit'>Save</button>}
                                     <button type='button' onClick={() => { setEditingTodo(null) }}>Cancel</button>
                                 </form>
@@ -272,33 +277,9 @@ function ViewTodos() {
                 <ul className="completed-todos-list todos-list">
                     {completedTodos.length > 0 && completedTodos.map((todo, index) => (
                         <li id={"todo-" + todo.id}  key={todo.id} className="todo-item-card" style={{ background: calculateBackground(editingTodo?.progress || todo.progress) }}>
-                            {editingTodo && editingTodo.id === todo.id ? (
-                                <form onSubmit={(e) => handleEditTodo(e, todo.id)} className="edit-todo-form">
-                                    <input
-                                        id={"todo-" + todo.id}
-                                        type="text"
-                                        value={editingTodo.title}
-                                        className='title'
-                                        onChange={(e) => setEditingTodo({ ...editingTodo, title: e.target.value })}
-                                        autoFocus
-                                    />
-                                    <div className="range-slider-container">
-                                        <span className="slider-value">{editingTodo.progress}</span>
-                                    </div>
-                                    <input
-                                        type="date"
-                                        value={newTodo.start}
-                                        className='start'
-                                        onChange={(e) => setNewTodo({ ...newTodo, start: e.target.value })}
-                                    />
-                                    {(editingTodo.title !== todo.title || editingTodo.progress !== todo.progress) && <button type='submit'>Save</button>}
-                                    <button type='button' onClick={() => { setEditingTodo(null) }}>Cancel</button>
-                                </form>
-                            ) : (
-                                <div className="todo-card-header">
-                                    {todo.title}
-                                </div>
-                            )}
+                            <div className="todo-card-header">
+                                {todo.title}
+                            </div>
                             <div className="todo-card-options">
                                 <button onClick={() => handleDeleteTodo(todo.id)}>Delete</button>
                                 <button type="button" onClick={() => handleToggleTodoStatus(todo)}>Undone</button>

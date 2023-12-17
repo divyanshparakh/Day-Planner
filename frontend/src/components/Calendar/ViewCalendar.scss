@@ -1,10 +1,9 @@
 .calendar {
     .fc {
-        height: 90%;
-        width: calc(100% - 90px);
+        height: 70%;
+        width: 90%;
         z-index: 1;
-        position: absolute;
-        right: 0;
-        margin: 10px;
+        position: relative;
+        margin: 10px auto;
     }
 }
