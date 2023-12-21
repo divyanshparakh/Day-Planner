@@ -1,4 +1,14 @@
 /* todo-list.scss */
+.loading {
+    font-size: 1.75rem;
+    color: #e3507d;
+    font-weight: 600;
+    position: absolute;
+    left: 45%;
+    top: 50%;
+    margin: auto;
+}
+
 .scaffold {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     background-color: rgba(0, 0, 0, 0.8);
@@ -74,10 +84,6 @@
         }
     }
 
-    .title {
-        text-align: center;
-    }
-
     .search-todo {
         width: 410px;
         height: 3rem;
@@ -91,7 +97,7 @@
         margin: 20px auto;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         border-radius: 8px;
-        font-size: 1rem;
+        font-size: 1.2rem;
         &:focus {
             outline: none;
             color: #efefef;
@@ -99,93 +105,17 @@
         }
     }
 
-    .create-todo {
+    .add-todo {
         background-color: #eee;
         border-radius: 5px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        padding: 15px;
+        padding: 25px;
         margin: 15px;
-        margin-bottom: 0;
         display: flex;
         flex-direction: column;
         align-items: center;
-        
-        button {
-            cursor: pointer;
-            width: 220px;
-            height: 40px;
-            margin: 10px;
-            background-color: #140156;
-            border: 2px solid #e3507d;
-            color: #e3507d;
-            font-weight: 400;
-            span {
-                color: #e3507d;
-                font-weight: 600;
-            }
-            &:hover {
-                background-color: #e3507d;
-                color: whitesmoke;
-                span {
-                    color: whitesmoke;
-                }
-            }
-            &:active:enabled {
-                transform: scale(0.95);
-            }
-        }
-
-        .title {
-            width: 210px;
-            height: 30px;
-            margin: 10px;
-            border: 2px solid #e3507d;
-            padding: 5px;
-            text-align: center;
-            font-weight: 600;
-            appearance: none;
-            background-color: rgba(20, 1, 86, 1);
-            color: #e3507d;
-            &:hover {
-                background-color: #e3507d;
-                color: whitesmoke;
-            }
-        }
-
-        .range-slider-container {
-            width: 220px;
-            height: 40px;
-            margin: 10px;
-            position: relative;
-            display: flex;
-            justify-content: space-between;
-            background-color: rgba(20, 1, 86, 1);
-            border: 2px solid #e3507d;
-
-            .slider {
-                border-radius: 5px;
-                background: #d3d3d3;
-                outline: none;
-                opacity: 0.7;
-                transition: opacity 0.2s;
-                cursor: pointer;
-
-                &::-webkit-slider-thumb {
-                    -webkit-appearance: none;
-                    appearance: none;
-                    width: 0;
-                    height: 0;
-                }
-            }
-        
-            .slider-value {
-                position: relative;
-                top: -1px;
-                right: 1px;
-                text-align: center;
-                color: #d3d3d3;
-            }
-        }
+        justify-content: space-between;
+        column-gap: 40px;
     }
 
     .todos-list {
@@ -194,7 +124,7 @@
             background-color: #eee;
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            padding: 10px;
+            padding: 5px;
             margin: 15px auto;
             transition: background-color 0.3s ease-in-out;
             display: flex;
@@ -207,21 +137,10 @@
                 background-color: #f0f0f0;
             }
             .edit-todo-form {
-                .title {
-                    width: 210px;
-                    height: 30px;
-                    border: 2px solid #e3507d;
-                    padding: 5px;
-                    text-align: center;
-                    font-weight: 600;
-                    appearance: none;
-                    background-color: rgba(20, 1, 86, 0.7);
-                    color: #e3507d;
-                    &:hover {
-                        background-color: #e3507d;
-                        color: whitesmoke;
-                    }
-                }
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                margin: 5px auto;
             }
             .todo-card-header {
                 font-weight: bold;
@@ -268,5 +187,39 @@
         &:active:enabled {
             transform: scale(0.95);
         }
+    }
+}
+
+.slider-canvas {
+    width: 210px;
+    height: 40px;
+    padding: 10px;
+    position: relative;
+    background-color: rgba(20, 1, 86, 1);
+    border: 2px solid #e3507d;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .slider {
+        border-radius: 5px;
+        background: #d3d3d3;
+        outline: none;
+        opacity: 0.7;
+        transition: opacity 0.2s;
+        cursor: pointer;
+        width: 90%;
+
+        &::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 0;
+            height: 0;
+        }
+    }
+
+    .slider-value {
+        text-align: right;
+        color: #e3507d;
     }
 }

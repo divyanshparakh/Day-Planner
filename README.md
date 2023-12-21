@@ -11,8 +11,6 @@ Welcome to Day Planner – an all-in-one web application designed to enhance you
 
 [![License](https://img.shields.io/badge/license-Apache-blue.svg)](LICENSE)
 
-![alt text](Screenshot.png "Day Planner")
-
 # Project Features
 
 - **Todo Functionality**

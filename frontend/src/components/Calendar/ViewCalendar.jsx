@@ -37,13 +37,13 @@ function ViewCalendar() {
             if(eventInfo.event.extendedProps.completed)
                 return (
                     <>
-                        <strong><strike>{ eventInfo.event.title }</strike></strong>
+                        <strong id='event-title'><strike>{ eventInfo.event.title }</strike></strong>
                     </>
                 )
             else
                 return (
                     <>
-                        <strong>{ eventInfo.event.title }</strong>
+                        <strong id='event-title'>{ eventInfo.event.title }</strong>
                     </>
                 )
         }

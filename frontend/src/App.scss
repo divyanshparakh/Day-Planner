@@ -48,3 +48,39 @@
         transform: scale(0.95);
     }
 }
+
+.custom-text-input {
+    width: 210px;
+    height: 40px;
+    border: 2px solid #e3507d;
+    padding: 10px;
+    text-align: center;
+    font-weight: 600;
+    appearance: none;
+    background-color: #140156;
+    color: #e3507d;
+    &:hover {
+        background-color: #e3507d;
+        color: whitesmoke;
+    }
+}
+
+
+.custom-date-input-cover
+{
+    position: relative;
+    width: 100%;
+    margin: auto;
+    color: #e3507d;
+    .custom-date-input {
+        display: block;
+        background-color: rgba(20, 1, 86, 0.7);
+        color: #e3507d;
+        border: 2px solid #e3507d;
+        width: 210px;
+        height: 40px;
+        padding: 10px;
+        margin: auto;
+        font-weight: 400;
+    }
+}
