@@ -1,6 +1,11 @@
 # Day Planner App
 Welcome to Day Planner – an all-in-one web application designed to enhance your productivity and streamline your daily activities. This project integrates a powerful Todo system, real-time weather updates, and an intuitive calendar interface for effective task management. Stay organized, stay informed, and stay productive with my feature-rich web application.
 
+
+https://github.com/divyanshparakh/Day-Planner/assets/68633935/9aacc80b-f52d-4a03-a171-c1a409c17649
+
+
+
 **Key Features:**
 - 📝 **Todo Functionality:** Create, edit, and manage your tasks seamlessly.
 - 🌦️ **Weather Integration:** Stay updated with real-time weather information.
