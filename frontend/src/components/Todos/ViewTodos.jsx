@@ -4,6 +4,7 @@ import api from '../../index';
 import ViewCalendar from '../Calendar/ViewCalendar';
 import { useAppSelector, useAppDispatch } from '../../store/hooks/index.ts';
 import { addTodo } from '../../store/slices/todos/index.ts';
+import Loading from '../Loading/Loading.jsx';
 
 
 function ViewTodos() {
@@ -12,18 +13,18 @@ function ViewTodos() {
     const [searchTerm, setSearchTerm] = useState('');
     // const [todos, setTodos] = useState([]);
     
-    const incompletedTodos = useAppSelector((state) => {
-        if(state.todos.length > 0) {
-            return state.todos.filter(function(todo) {
+    const incompletedTodos = useAppSelector(() => {
+        if(todos && todos.length > 0) {
+            return todos.filter(function(todo) {
                 return (todo.completed === false && (todo.title.includes(searchTerm) || todo.start.includes(searchTerm)));
             });
         }
         return [];
     });
 
-    const completedTodos = useAppSelector((state) => {
-        if(state.todos.length > 0) {
-            return state.todos.filter(function(todo) {
+    const completedTodos = useAppSelector(() => {
+        if(todos && todos.length > 0) {
+            return todos.filter(function(todo) {
                 return (todo.completed === true && (todo.title.includes(searchTerm) || todo.start.includes(searchTerm)));
             });
         }
@@ -153,6 +154,13 @@ function ViewTodos() {
         return `linear-gradient(to right, #8d80f6 ${progress}%, #625a69 ${progress}%)`;
     };
 
+    const makeOptionVisible = () => {
+        const elements = document.getElementsByClassName('todo-card-options');
+        for(let i = 0; i < elements.length; i++)
+            if(elements[i].style.display == 'none')
+                elements[i].style.display = 'block';
+    }
+
     useEffect(() => {
         getTodos();
         const handleKeyDown = (event) => {
@@ -161,10 +169,7 @@ function ViewTodos() {
                 handleNewTodoDialogClose();
                 setEditingTodo(null);
                 setSearchTerm('');
-                const elements = document.getElementsByClassName('todo-card-options');
-                for(let i = 0; i < elements.length; i++)
-                    if(elements[i].style.display == 'none')
-                        elements[i].style.display = 'block';
+                makeOptionVisible();
             // Close the edit todo dialog
             }
         };
@@ -177,7 +182,7 @@ function ViewTodos() {
 	}, []);
 
     if (isLoading) {
-        return <div className="loading">Loading...</div>;
+        return <Loading></Loading>
     }
 
     // const filteredTodos = showCompleted ? completedTodos : todos.filter(todo => todo.title.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -266,7 +271,7 @@ function ViewTodos() {
                                         />
                                     </span>
                                     <span>
-                                        {(editingTodo.title !== todo.title || editingTodo.progress !== todo.progress) && <button className='custom-button' type='submit'>Save</button>}
+                                        {(editingTodo.title !== todo.title || editingTodo.progress !== todo.progress) && <button className='custom-button' onClick={() => {document.getElementById('todo-' + todo.id).lastChild.style.display='block'}} type='submit'>Save</button>}
                                         <button type='button' className='custom-button' onClick={() => { setEditingTodo(null); document.getElementById('todo-' + todo.id).lastChild.style.display='block'; }}>Cancel</button>
                                     </span>
                                 </form>

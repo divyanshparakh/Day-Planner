@@ -1,0 +1,17 @@
+# database-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: database-service
+  labels:
+    app: database
+    tier: database
+spec:
+  type: NodePort
+  selector:
+    app: database
+    tier: database
+  ports:
+  - protocol: TCP
+    port: 5432
+    targetPort: 5432

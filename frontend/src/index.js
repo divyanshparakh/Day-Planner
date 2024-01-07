@@ -7,6 +7,7 @@ import { Provider } from 'react-redux'
 import { store } from './store/index.ts';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
+const baseURL = process.env.REACT_APP_SERVER_API_URL;
 root.render(
 	<React.StrictMode>
 		<Provider store={store}> {/* Passing store so that it can be accessible from anywhere inside it */}
@@ -16,14 +17,14 @@ root.render(
 );
 
 const api = axios.create({
-    baseURL: 'http://localhost:3000/',
+    baseURL: baseURL,
     timeout: 1000,
     headers: {
 		"Content-Type": "application/json;charset=UTF-8",
 		"Accept": "application/vnd.api+json",
 		"Authorization": localStorage["token"],
     }
-})
+});
 
 // reportWebVitals();
 

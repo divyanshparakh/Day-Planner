@@ -1,0 +1,43 @@
+# server-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: server-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: server
+  template:
+    metadata:
+      labels:
+        app: server
+    spec:
+      containers:
+      - name: server-container
+        image: d1vyansh/server-image
+        ports:
+        - containerPort: 3000
+        env:
+        - name: NODE_ENV
+          value: production
+        - name: PGDATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: server-configmap
+              key: DB_DATABASE
+        - name: PGUSER
+          valueFrom:
+            configMapKeyRef:
+              name: server-configmap
+              key: DB_USER
+        - name: PGPASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: server-secrets
+              key: DB_PASSWORD
+        - name: PGHOST
+          value: day_planner_database
+      volumes:
+      - name: server-volume
+        emptyDir: {}

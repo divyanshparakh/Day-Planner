@@ -1,53 +1,8 @@
 version: '3.8'
 services:
-  frontend:
-    container_name: frontend-container
-    image: frontend-image
-    build:
-      context: ./frontend/
-      dockerfile: Dockerfile
-    expose:
-      - ${APP_PORT}
-    ports:
-      - "${APP_PORT}:${APP_PORT}"
-    environment:
-      - EXTENRAL_PORT=${APP_PORT}
-      - REACT_APP_WEATHER_API_KEY=${REACT_APP_WEATHER_API_KEY}
-    env_file:
-      - .env
-    depends_on:
-      - server
-    networks:
-      - todo_network
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-  server:
-    container_name: server-container
-    image: server-image
-    build:
-      context: ./server/
-      dockerfile: Dockerfile
-    expose:
-      - ${SERVER_PORT}
-    ports:
-      - "${SERVER_PORT}:${SERVER_PORT}"
-    environment:
-      - EXTENRAL_PORT=${SERVER_PORT}
-      - PGDATABASE=${DB_DATABASE}
-      - PGUSER=${DB_USER}
-      - PGPASSWORD=${DB_PASSWORD}
-      - PGHOST=database
-    env_file:
-      - .env
-    depends_on:
-      - database
-    restart: unless-stopped
-    networks:
-      - todo_network
   database:
     container_name: database-container
-    image: "postgres:${POSTGRES_VERSION}-alpine"
+    image: "postgres:16.0-alpine"
     ports:
       - "5432:5432"
     environment:
@@ -60,7 +15,53 @@ services:
       - ./database/init-scripts:/docker-entrypoint-initdb.d
     restart: unless-stopped
     networks:
-      - todo_network
+      - day_planner_network
+  server:
+    container_name: server-container
+    image: server-image
+    hostname: server
+    build:
+      context: ./server/
+      dockerfile: Dockerfile
+    expose:
+      - ${SERVER_PORT}
+    ports:
+    - "${SERVER_PORT}:${SERVER_PORT}"
+    environment:
+      - NODE_ENV=production
+      - PGDATABASE=${DB_DATABASE}
+      - PGUSER=${DB_USER}
+      - PGPASSWORD=${DB_PASSWORD}
+      - PGHOST=${DB_DATABASE}
+    env_file:
+      - .env
+    depends_on:
+      - database
+    restart: unless-stopped
+    networks:
+      - day_planner_network
+  frontend:
+    container_name: frontend-container
+    image: frontend-image
+    build:
+      context: ./frontend/
+      dockerfile: Dockerfile
+    expose:
+      - ${APP_PORT}
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    env_file:
+      - ./frontend/.env
+      - .env
+    depends_on:
+      - server
+    networks:
+      - day_planner_network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    links:
+      - server
 networks:
-  todo_network:
+  day_planner_network:
     driver: bridge

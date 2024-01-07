@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: database-deployment
+  labels:
+    app: database
+    tier: database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: database
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: database
+        tier: database
+    spec:
+      containers:
+      - name: database-container
+        image: postgres:16.0-alpine
+        imagePullPolicy: "IfNotPresent"
+        env:
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: database-secrets
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: database-secrets
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          value: day_planner_database
+        - name: PGPORT
+          value: '5432'
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - name: database-volume
+          mountPath: /var/lib/postgresql/data
+        - name: database-initdb
+          mountPath: /docker-entrypoint-initdb.d
+      volumes:
+      - name: database-volume
+        persistentVolumeClaim:
+          claimName: database-volume
+
+      - name: database-initdb
+        configMap:
+          name: database-configmap

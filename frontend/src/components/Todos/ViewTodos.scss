@@ -1,14 +1,4 @@
 /* todo-list.scss */
-.loading {
-    font-size: 1.75rem;
-    color: #e3507d;
-    font-weight: 600;
-    position: absolute;
-    left: 45%;
-    top: 50%;
-    margin: auto;
-}
-
 .scaffold {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     background-color: rgba(0, 0, 0, 0.8);
@@ -149,6 +139,7 @@
                 padding: 10px;
                 text-align: center;
                 cursor: text;
+                cursor: pointer;
             }
             .todo-card-options {
                 color: #666;

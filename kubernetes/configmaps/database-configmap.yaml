@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: database-configmap
+data:
+  init.sql: |
+    CREATE EXTENSION pgcrypto;
+
+    CREATE TABLE todos (
+        id VARCHAR(225) UNIQUE PRIMARY KEY,
+        email VARCHAR(255),
+        title VARCHAR(30),
+        start VARCHAR(11),
+        completed BOOLEAN,
+        progress INTEGER NOT NULL
+    );
+
+    INSERT INTO todos VALUES (
+        'test-id-string-1',
+        'test@gmail.com',
+        'Go to Gym',
+        '2023-12-01',
+        FALSE,
+        70
+    );
+
+    INSERT INTO todos VALUES (
+        'test-id-string-2',
+        'test@gmail.com',
+        'Go to Gym Twice',
+        '2023-12-02',
+        TRUE,
+        30
+    );
+
+    -- Define the 'authentication' schema and table
+    CREATE SCHEMA IF NOT EXISTS authentication;
+
+    CREATE ROLE worker WITH
+        LOGIN
+        PASSWORD 'iamworker'
+        NOSUPERUSER
+        INHERIT
+        NOCREATEDB
+        NOCREATEROLE
+        NOREPLICATION;
+    GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE todos TO worker;
+
+    CREATE TABLE authentication (
+        email VARCHAR(50) NOT NULL UNIQUE PRIMARY KEY,
+        phone NUMERIC(10) NOT NULL UNIQUE,
+        password VARCHAR(200) NOT NULL,
+        name VARCHAR(200) NOT NULL,
+        creation_info TIMESTAMP DEFAULT Now()
+    );
+
+
+    -- Insert initial data
+    INSERT INTO authentication (email, phone, password, name)
+    VALUES (
+        'test@gmail.com',
+        9999999999,
+        '$2a$06$0nk7Pq.u3E0kt7Il0eRpZu8.IvW3UC1QpHjFP7GUXs5mrG7xteCnK',
+        'Tester'
+    );

@@ -1,3 +1,33 @@
+For building individual component
+------------------------
+docker build -t day-planner/frontend-image ./sub-component
+
+
+For pushing image to hub
+------------------------
+docker login
+docker tag component-image username/reponame
+docker push username/reponame
+
+For building and running project
+--------------------------------
 docker compose build
 docker compose up
-docker exec -it database-container psql -U postgres database
+docker exec -it k8s_database-container_database-deployment-6985694f48-rzd7g_default_46f5f13f-736e-415c-b963-67e0dfe54f54_0 psql -U postgres day_planner_database
+
+
+Kubernetes
+----------
+docker context use default
+minikube start
+minikube delete --all
+minikube start --driver=docker --vm=true
+/* minikube addons enable ingress */
+
+kubectl delete --all services
+kubectl delete --all deployments
+kubectl delete --all secrets
+
+
+to get IP
+minikube service service-name
